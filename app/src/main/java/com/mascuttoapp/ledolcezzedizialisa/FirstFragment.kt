@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -32,31 +33,31 @@ class FirstFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         val recyclerView: RecyclerView = view.findViewById(R.id.formulas)
-
+        viewManager = LinearLayoutManager(activity)
         recyclerView.apply {
             adapter = viewAdapter
             layoutManager = viewManager
         }
+
         return view
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    viewManager = LinearLayoutManager(activity)
-    viewAdapter = FormulaAdapter(FormulaHandler.getFormulas(
-                  database, object : FormulaHandler.FirebaseBusCallback {
+        super.onCreate(savedInstanceState)
+        viewAdapter = FormulaAdapter(FormulaHandler.getFormulas(
+                      database, object : FormulaHandler.FirebaseBusCallback {
 
-                override fun onReadCompletedCallback(value: ArrayList<Formula>?) {
-                    if (value != null) {
-                        formulaDataset = value
-                        viewAdapter.notifyDataSetChanged()
+                    override fun onReadCompletedCallback(value: ArrayList<Formula>?) {
+                        if (value != null) {
+                            formulaDataset = value
+                            viewAdapter.notifyDataSetChanged()
+                        }
                     }
-                }
-            })
-        ) { position ->
-            var bundle = bundleOf("formulaSelected" to position)
-            bundle?.putSerializable("formulaSelected", position)
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment,bundle)
-
-        }
+                })
+            ) { position ->
+                var bundle = bundleOf("formulaSelected" to position)
+                bundle?.putSerializable("formulaSelected", position)
+                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+            }
 }
 }

@@ -3,13 +3,13 @@ package com.mascuttoapp.ledolcezzedizialisa.bean
 import java.io.Serializable
 
 class Formula: Serializable {
-        var name:String? = ""
+        var name:String? = null
         var duration : Long? = 0
-        var level : String? = ""
+        var level : String? = null
         var steps = mutableListOf<String>()
-        var icon : String? = ""
+        var icon : String? = null
         var elements = mutableListOf<String>()
-        var video : String? = ""
+        var video : String? = null
 
         constructor(name:String, duration: Long, level: String, video: String, icon: String, steps: List<String>, elements: List<String>) {
             this.name = name

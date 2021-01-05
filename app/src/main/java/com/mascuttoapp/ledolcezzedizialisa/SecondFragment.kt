@@ -5,12 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.MediaController
-import android.widget.TextView
-import android.widget.VideoView
+import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mascuttoapp.ledolcezzedizialisa.adapter.StepAdapter
@@ -30,12 +27,13 @@ class SecondFragment : Fragment() {
     private lateinit var formulaSelected : com.mascuttoapp.ledolcezzedizialisa.bean.Formula
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var imageResult: ImageView
+    private lateinit var probressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
             mCurrentPosition = savedInstanceState.getInt(PLAYBACK_TIME);
-
         }
         formulaSelected = arguments?.getSerializable("formulaSelected" ) as com.mascuttoapp.ledolcezzedizialisa.bean.Formula
         viewManager = LinearLayoutManager(activity)
@@ -60,7 +58,7 @@ class SecondFragment : Fragment() {
         mBufferingTextView = view.findViewById(R.id.buffering_textview);
 
         // Set up the media controller widget and attach it to the video view.
-        var controller = MediaController(context)
+        var controller = MediaController(context) 
         controller.setMediaPlayer(mVideoView)
         mVideoView?.setMediaController(controller)
 
@@ -68,18 +66,30 @@ class SecondFragment : Fragment() {
         var duration = view.findViewById(R.id.durationDetail) as TextView
         var level = view.findViewById(R.id.levelDetail) as TextView
         var elements = view.findViewById(R.id.elementsDetail) as TextView
+        var moreElements = view.findViewById(R.id.popup_elements) as ImageView
+
+        var elementsAL: ArrayList<String> = ArrayList()
+        imageResult =  view.findViewById(R.id.imageViewResult) as ImageView
+        probressBar = view.findViewById(R.id.progressBar) as ProgressBar
+        formulaSelected.elements.forEach {
+            elementsAL.add(it)
+        }
+        moreElements.setOnClickListener {
+            var bundle = bundleOf("elements" to elementsAL)
+            bundle?.putStringArrayList("elements", elementsAL )
+            ElementFragment.newInstance(elementsAL).show(requireActivity().supportFragmentManager, "    sdcdcd")
+        }
 
         name.text = formulaSelected.name
         duration.text = getString(R.string.duration).plus(formulaSelected.duration.toString())
         level.text = getString(R.string.level).plus(formulaSelected.level)
 
         val recyclerView: RecyclerView = view.findViewById(R.id.stepsDetail)
-
         recyclerView.apply {
             adapter = viewAdapter
             layoutManager = viewManager
         }
-        var stringElements =""
+        var stringElements = ""
         formulaSelected.elements.forEach {
             stringElements = stringElements.plus(it.plus(", "))
         }
@@ -87,17 +97,17 @@ class SecondFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        view.findViewById<Button>(R.id.button_second).setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-        }
-    }
-
     override fun onStart() {
         super.onStart()
-        initializePlayer()
+        if(formulaSelected.video != null)
+            initializePlayer(formulaSelected.video ?: "")
+        else doBackgroundImage(imageResult, formulaSelected.icon)
+    }
+
+    private fun doBackgroundImage(imageResult: ImageView, icon: String?) {
+        imageResult.visibility = View.VISIBLE
+        probressBar.visibility = View.VISIBLE
+        Utils.doInBackground(imageResult, probressBar, formulaSelected.icon)
     }
 
     override fun onStop() {
@@ -111,12 +121,12 @@ class SecondFragment : Fragment() {
         mVideoView!!.stopPlayback()
     }
 
-    private fun initializePlayer() {
+    private fun initializePlayer(video: String) {
         // Show the "Buffering..." message while the video loads.
         mBufferingTextView!!.visibility = VideoView.VISIBLE
 
         // Buffer and decode the video sample.
-        val videoUri: Uri = Utils.getMedia(formulaSelected.video ?: "")
+        val videoUri: Uri = Utils.getMedia(video)
         mVideoView!!.setVideoURI(videoUri)
 
         // Listener for onPrepared() event (runs after the media is prepared).
@@ -132,11 +142,8 @@ class SecondFragment : Fragment() {
             }
 
             // Start playing!
-        //    mVideoView!!.start()
+            mVideoView!!.start()
         }
-
-        // Listener for onCompletion() event (runs after media has finished
-        // playing).
         mVideoView!!.setOnCompletionListener {
             // Return the video position to the start.
             mVideoView!!.seekTo(0)

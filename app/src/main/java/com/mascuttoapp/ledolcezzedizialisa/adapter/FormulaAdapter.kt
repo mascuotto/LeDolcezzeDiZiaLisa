@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mascuttoapp.ledolcezzedizialisa.R
 import com.mascuttoapp.ledolcezzedizialisa.bean.Formula
-import com.mascuttoapp.ledolcezzedizialisa.util.DownloadImageFromInternet
+import com.mascuttoapp.ledolcezzedizialisa.util.Utils
 
 class FormulaAdapter( var myDataset: MutableList<Formula>, val listener: (Formula) -> Unit) : RecyclerView.Adapter<FormulaAdapter.FormulaViewHolder>() {
 
@@ -46,7 +46,7 @@ class FormulaAdapter( var myDataset: MutableList<Formula>, val listener: (Formul
 
         fun updateUI(formula: Formula){
             description?.text = formula.name
-            DownloadImageFromInternet(icon, progress).execute(formula.icon)
+            Utils.doInBackground(icon, progress,formula.icon)
             duration?.text = "circa ".plus(formula.duration).plus(" minuti")
             level?.text = "difficoltà ".plus(formula.level)
         }

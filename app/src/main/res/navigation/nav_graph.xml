@@ -5,17 +5,20 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/FirstFragment">
 
+    <!-- Action back to destination which launched into this in_game_nav_graph-->
+    <action android:id="@+id/action_pop_out_of_game"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
     <fragment
         android:id="@+id/FirstFragment"
         android:name="com.mascuttoapp.ledolcezzedizialisa.FirstFragment"
-        android:label="@string/first_fragment_label"
+        android:label="@string/fragment_label"
         tools:layout="@layout/fragment_first">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment"
-            app:popUpTo="@id/FirstFragment"
-            app:popUpToInclusive="false" />
+            app:destination="@id/SecondFragment"/>
         <argument
             android:name="formulaSelected"
             app:argType="com.mascuttoapp.ledolcezzedizialisa.bean.Formula" />
@@ -23,14 +26,20 @@
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.mascuttoapp.ledolcezzedizialisa.SecondFragment"
-        android:label="@string/second_fragment_label"
+        android:label="@string/fragment_label"
         tools:layout="@layout/fragment_second">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/FirstFragment"
-            app:popUpToInclusive="false" />
+            app:destination="@id/FirstFragment"/>
+        <action
+            android:id="@+id/action_SecondFragment_to_receiveFragment"
+            app:destination="@id/receiveFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/receiveFragment"
+        android:name="com.mascuttoapp.ledolcezzedizialisa.ReceiveFragment"
+        android:label="fragment_receive"
+        tools:layout="@layout/fragment_receive" >
     </fragment>
 </navigation>

@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#CE93D8</color>
     <color name="colorAccent">#CE93D8</color>
     <color name="colorRvBackground">#FFB6C1</color>
+    <color name="colorToolBarTitle">#FFFFFF</color>"
 </resources>

@@ -18,7 +18,7 @@ class StepAdapter(var myDataset: MutableList<String>) : RecyclerView.Adapter<Ste
     }
 
     override fun onBindViewHolder(holder: StepViewHolder, position: Int) {
-        holder.updateUI(myDataset[position], position)
+        holder.updateUI(myDataset[position], position+1)
     }
 
     // Return the size of your dataset (invoked by the layout manager)
